@@ -2,7 +2,7 @@
 
 Um bingo de networking para estudantes: cada casinha é uma missão (trocar ideias sobre currículo, pedir dicas de LinkedIn, conversar com quem já estagia...) e, para cumpri-la, você **escaneia o QR Code do perfil de outra pessoa**. Linha, coluna ou diagonal completa vira **bingo**.
 
-**Demo:** https://SEU-USUARIO.github.io/bingo-network/
+**Demo:** [Github pages](https://camilabernardis.github.io/network.fatec/)
 
 <!-- Depois de publicar, tire um print do celular, salve em docs/screenshot.png e descomente a linha abaixo:
 ![Tela do Bingo do Network](docs/screenshot.png)
