@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#b3121b">
+<title>Bingo do Network</title>
+<meta name="description" content="Bingo de networking para estudantes: complete missões escaneando o QR Code do LinkedIn de colegas.">
+<meta property="og:title" content="Bingo do Network">
+<meta property="og:description" content="Complete missões de networking escaneando QR Codes e faça bingo.">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<noscript>Este site precisa de JavaScript para funcionar.</noscript>
+<div class="wrap">
+  <h1>Bingo do Network</h1>
+  <div class="top">
+    <div class="progress">
+      <span id="progText">0 de 8 missões</span>
+      <div class="bar"><i id="barFill"></i></div>
+    </div>
+    <label class="sem">Meu semestre
+      <input id="mySem" type="number" inputmode="numeric" min="1" max="12" placeholder="ex: 3">
+    </label>
+  </div>
+
+  <div class="tabs">
+    <button id="tabBoard" class="on" type="button">Bingo</button>
+    <button id="tabNet" type="button">Meu network</button>
+  </div>
+
+  <section id="viewBoard">
+    <div id="board" class="board"></div>
+    <p class="hint">Toque numa casinha para ver a missão e escanear o QR Code da pessoa.</p>
+  </section>
+
+  <section id="viewNet" hidden>
+    <ul id="netList" class="list"></ul>
+    <button id="copyBtn" class="btn dark" type="button">Copiar lista</button>
+  </section>
+
+  <button id="resetBtn" class="btn link" type="button">Reiniciar bingo</button>
+</div>
+
+<!-- Missão -->
+<div id="sheet" class="overlay" role="dialog" aria-modal="true">
+  <div class="panel">
+    <button class="x" id="sheetClose" type="button" aria-label="Fechar">&times;</button>
+    <div id="sheetBody"></div>
+  </div>
+</div>
+
+<!-- Confirmar pessoa -->
+<div id="confirm" class="overlay z2" role="dialog" aria-modal="true">
+  <div class="panel">
+    <button class="x" id="confirmClose" type="button" aria-label="Fechar">&times;</button>
+    <h2>Pessoa encontrada</h2>
+    <p id="confirmInfo" class="status ok"></p>
+    <label for="cName">Nome</label>
+    <input id="cName" type="text" maxlength="80" placeholder="Nome da pessoa" autocomplete="off">
+    <div id="cSemWrap" hidden>
+      <label for="cSem">Semestre dessa pessoa</label>
+      <input id="cSem" type="number" inputmode="numeric" min="1" max="12" placeholder="ex: 5">
+    </div>
+    <p id="cErr" class="err"></p>
+    <button id="cOk" class="btn primary" type="button">Confirmar</button>
+    <button id="cCancel" class="btn" type="button">Cancelar</button>
+  </div>
+</div>
+
+<!-- Scanner -->
+<div id="scanner">
+  <video id="video" playsinline muted autoplay></video>
+  <div class="frame"></div>
+  <div class="bar2">
+    <p id="scanStatus">Aponte para o QR Code</p>
+    <button id="scanClose" type="button">Fechar câmera</button>
+  </div>
+</div>
+<canvas id="canvas" hidden></canvas>
+
+<!-- Bingo -->
+<div id="celebrate" class="celebrate">
+  <div class="box">
+    <h3 id="celTitle">BINGO!</h3>
+    <p id="celText"></p>
+    <button id="celOk" class="btn primary" type="button">Continuar</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<script src="script.js" defer></script>
+</body>
+</html>

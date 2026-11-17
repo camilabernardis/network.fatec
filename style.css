@@ -1,0 +1,72 @@
+:root{--red:#b3121b;--dark:#3f4752;--beige:#e8e5df;--bg:#faf9f7;--ink:#23272e;--line:#2c3139;--gold:#f2b705;--green:#1f9d55}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.35}
+body.lock{overflow:hidden}
+.wrap{max-width:520px;margin:0 auto;padding:16px 14px calc(24px + env(safe-area-inset-bottom))}
+h1{font-size:22px;margin:4px 0 10px}
+.top{display:flex;gap:12px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap}
+.progress{flex:1;min-width:160px}
+.progress span{font-size:14px;font-weight:600}
+.bar{height:8px;background:#ddd9d1;border-radius:99px;margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--red);transition:width .3s}
+.sem{font-size:13px;display:flex;flex-direction:column;gap:4px;font-weight:600}
+.sem input{width:92px;padding:8px 10px;border:2px solid var(--line);border-radius:10px;font-size:16px;background:#fff}
+.tabs{display:flex;gap:8px;margin:14px 0}
+.tabs button{flex:1;padding:10px;border:2px solid var(--line);background:#fff;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer;color:var(--ink)}
+.tabs button.on{background:var(--dark);color:#fff}
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tile{position:relative;aspect-ratio:1/1;border:2px solid var(--line);border-radius:16px;padding:8px 6px;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:700;font-size:clamp(10px,2.9vw,13.5px);line-height:1.2;overflow:hidden;cursor:pointer;font-family:inherit;hyphens:auto;overflow-wrap:anywhere}
+.tile.red{background:var(--red);color:#fff}
+.tile.dark{background:var(--dark);color:#fff}
+.tile.beige{background:var(--beige);color:var(--ink)}
+.tile.free{background:#fff;cursor:default;color:var(--dark)}
+.tile.free svg{width:48%;height:48%}
+.tile.done{box-shadow:inset 0 0 0 3px rgba(255,255,255,.6)}
+.tile.beige.done{box-shadow:inset 0 0 0 3px rgba(0,0,0,.18)}
+.tile .badge{position:absolute;top:5px;right:5px;width:22px;height:22px;border-radius:50%;background:var(--green);color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.tile .count{position:absolute;bottom:5px;left:0;right:0;font-size:11px;opacity:.9}
+.tile.bingo{outline:4px solid var(--gold);outline-offset:1px}
+.hint{font-size:13px;color:#666;text-align:center;margin:14px 0 0}
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.list li{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:10px 12px}
+.list li div{min-width:0}
+.list b{display:block;overflow-wrap:anywhere}
+.list small{display:block;color:#666;font-size:12px}
+.list a,.list button{flex:none;border:2px solid var(--line);background:#fff;border-radius:10px;padding:6px 10px;font-weight:700;font-size:13px;color:var(--ink);text-decoration:none;cursor:pointer;font-family:inherit}
+.empty{color:#666;text-align:center;padding:18px 0}
+.btn{display:block;width:100%;padding:13px;border-radius:12px;border:2px solid var(--line);background:#fff;font-weight:700;font-size:16px;cursor:pointer;color:var(--ink);font-family:inherit;margin-top:10px}
+.btn.primary{background:var(--red);border-color:var(--red);color:#fff}
+.btn.dark{background:var(--dark);border-color:var(--dark);color:#fff}
+.btn.link{border:none;background:none;color:#777;font-size:13px;font-weight:600;text-decoration:underline;margin-top:22px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;justify-content:center;z-index:10}
+.overlay.open{display:flex}
+.overlay.z2{z-index:20}
+.panel{background:#fff;width:100%;max-width:520px;max-height:90vh;max-height:90dvh;overflow:auto;border-radius:20px 20px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));position:relative}
+.panel h2{font-size:17px;margin:0 28px 10px 0}
+.panel .x{position:absolute;top:10px;right:12px;border:none;background:none;font-size:26px;line-height:1;cursor:pointer;color:#555;padding:6px}
+.status{font-weight:700;font-size:14px;color:#8a5a00;margin:0 0 10px}
+.status.ok{color:var(--green)}
+.panel label{display:block;font-weight:700;font-size:13px;margin:14px 0 6px}
+.panel input[type=text],.panel input[type=number],.panel textarea{width:100%;padding:11px 12px;border:2px solid var(--line);border-radius:10px;font-size:16px;font-family:inherit;background:#fff}
+.panel textarea{min-height:80px;resize:vertical}
+.paste{display:flex;gap:8px;margin-top:10px}
+.paste input{flex:1;min-width:0}
+.paste button{flex:none;width:auto;margin:0;padding:0 14px}
+.err{color:var(--red);font-weight:600;font-size:13px;margin:8px 0 0;min-height:1em}
+.people{margin-bottom:6px}
+#scanner{position:fixed;inset:0;background:#000;z-index:30;display:none;flex-direction:column}
+#scanner.open{display:flex}
+#scanner video{flex:1;width:100%;min-height:0;object-fit:cover}
+#scanner .frame{position:absolute;left:50%;top:42%;width:62vmin;height:62vmin;transform:translate(-50%,-50%);border:3px solid #fff;border-radius:18px;box-shadow:0 0 0 100vmax rgba(0,0,0,.45);pointer-events:none}
+#scanner .bar2{position:absolute;left:0;right:0;bottom:0;padding:16px 16px calc(16px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(0,0,0,.85));color:#fff;text-align:center}
+#scanner .bar2 p{margin:0 0 12px;font-weight:600}
+#scanner .bar2 button{padding:12px 24px;border-radius:12px;border:2px solid #fff;background:none;color:#fff;font-weight:700;font-size:16px;cursor:pointer;font-family:inherit}
+.celebrate{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:40;display:none;align-items:center;justify-content:center;padding:20px}
+.celebrate.open{display:flex}
+.celebrate .box{background:#fff;border-radius:22px;padding:28px 22px;text-align:center;max-width:360px;width:100%;border:4px solid var(--gold)}
+.celebrate h3{font-size:38px;margin:0;color:var(--red);letter-spacing:1px}
+.celebrate p{margin:10px 0 0}
+#toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(20px);background:#23272e;color:#fff;padding:11px 16px;border-radius:12px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:50;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
