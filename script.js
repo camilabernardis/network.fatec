@@ -347,10 +347,10 @@
     updateLock();
     setScanStatus('Abrindo a câmera…');
 
-    if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    /*if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       setScanStatus('A câmera só funciona em site com HTTPS. Feche e cole o link do perfil.');
       return;
-    }
+    } */
     if (typeof window.jsQR !== 'function') {
       setScanStatus('Leitor de QR não carregou (sem internet?). Feche e cole o link do perfil.');
       return;
