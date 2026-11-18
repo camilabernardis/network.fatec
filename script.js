@@ -8,34 +8,35 @@
       text: 'Conectei-me no LinkedIn com pelo menos 3 pessoas de semestres diferentes do meu',
       short: 'Conectar com 3 pessoas de outros semestres' },
     { id: 'm1', tone: 'dark',  needs: 1,
+      text: 'Troquei contato (WhatsApp ou LinkedIn) com alguém que já faz estágio na minha área de interesse',
+      short: 'Contato com quem já estagia na minha área de interesse' },
+    { id: 'm2', tone: 'red', needs: 1,
+      text: 'Compartilhei o link do meu github com um colega para receber feedback ou trocar ideias',
+      short: 'Github compartilhado para feedback' },
+    { id: 'm3', tone: 'dark',   needs: 1,
       text: 'Troquei ideias com alguém sobre como estruturar melhor o currículo para vagas de tecnologia',
-      short: 'Ideias para estruturar o currículo de tecnologia' },
-    { id: 'm2', tone: 'beige', needs: 1,
+      short: 'Ideias para estruturar o currículo' },
+    { id: 'm4', tone: 'dark',  needs: 1,
+      text: 'Conversei com alguém sobre o processo seletivo (entrevistas, testes técnicos ou dinâmicas) da empresa onde a pessoa estagia ou trabalha',
+      short: 'Dicas para processo seletivo' },
+    { id: 'm5', tone: 'beige',  needs: 1,
       text: 'Conversei com um aluno que trabalha na área para entender como ele gerencia o tempo entre a rotina de trabalho/estágio e as entregas da faculdade',
-      short: 'Conversa com aluno que trabalha: gestão do tempo' },
-    { id: 'm3', tone: 'red',   needs: 1,
+      short: 'Dicas para gerir estudo e trabalho' },
+    { id: 'm6', tone: 'red',   needs: 1,
       text: 'Troquei dicas com um colega sobre como melhorar minha apresentação pessoal no LinkedIn',
       short: 'Dicas para melhorar meu LinkedIn' },
-    { id: 'm4', tone: 'dark',  needs: 1,
-      text: 'Troquei contato (WhatsApp ou LinkedIn) com alguém que já faz estágio na minha área de interesse',
-      short: 'Contato com quem já estagia na minha área' },
-    { id: 'm5', tone: 'dark',  needs: 1,
-      text: 'Troquei ideias sobre certificações ou cursos complementares que dão peso no currículo para quem quer atuar na nossa área',
-      short: 'Certificações e cursos que dão peso' },
-    { id: 'm6', tone: 'red',   needs: 1,
-      text: 'Conversei com alguém sobre o processo seletivo (entrevistas, testes técnicos ou dinâmicas) da empresa onde a pessoa estagia ou trabalha',
-      short: 'Processo seletivo da empresa de quem estagia' },
     { id: 'm7', tone: 'beige', needs: 1,
-      text: 'Compartilhei o link do meu portfólio com um colega para receber feedback ou trocar ideias',
-      short: 'Portfólio compartilhado para feedback' }
+      text: 'Troquei ideias sobre certificações ou cursos complementares que dão peso no currículo para quem quer atuar na nossa área',
+      short: 'Certificações e cursos que dão peso' }
   ];
   // posição 4 (centro) é a casa livre
   var CELLS = [MISSIONS[0], MISSIONS[1], MISSIONS[2],
                MISSIONS[3], null, MISSIONS[4],
                MISSIONS[5], MISSIONS[6], MISSIONS[7]];
-  var LINES = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  var LINES = [[0,1,2],[6,7,8],[0,3,6],[2,5,8]];
 
   /* ---------- Estado ---------- */
+  // state.celebrated = NÍVEL de celebração: 0 = nada, 1 = primeiro bingo, 2 = cartela cheia
   function load() {
     try {
       var s = JSON.parse(localStorage.getItem(KEY));
@@ -64,6 +65,17 @@
   function cellDone(c) { return c === null ? true : isDone(c); }
   function completedLines() {
     return LINES.filter(function (l) { return l.every(function (i) { return cellDone(CELLS[i]); }); });
+  }
+
+  // Nível atual do tabuleiro: 0 = nenhuma linha, 1 = ao menos uma linha, 2 = cartela cheia
+  function currentLevel() {
+    if (MISSIONS.every(isDone)) return 2;
+    return completedLines().length > 0 ? 1 : 0;
+  }
+  // Se a pessoa removeu alguém e perdeu a linha/cartela, o nível de celebração desce
+  function syncCelebrated() {
+    var lvl = currentLevel();
+    if (state.celebrated > lvl) { state.celebrated = lvl; save(); }
   }
 
   /* ---------- Utilidades ---------- */
@@ -196,27 +208,56 @@
   function renderAll() { renderBoard(); renderNet(); }
 
   /* ---------- Bingo ---------- */
-  function checkCelebrate() {
-    var n = completedLines().length;
-    var all = MISSIONS.every(isDone);
-    if (n > state.celebrated) {
-      state.celebrated = n;
-      save();
-      $('celTitle').textContent = all ? 'CARTELA CHEIA!' : 'BINGO!';
-      $('celText').textContent = all
-        ? 'Você completou todas as missões. Network em dia!'
-        : 'Você completou ' + n + (n === 1 ? ' linha.' : ' linhas.') + ' Continue assim!';
-      $('celebrate').classList.add('open');
-      updateLock();
-    } else if (n < state.celebrated) {
-      state.celebrated = n;
-      save();
-    }
+  function openCelebrate(title, text) {
+    $('celTitle').textContent = title;
+    $('celText').textContent = text;
+    $('celebrate').classList.add('open');
+    updateLock();
   }
-  $('celOk').addEventListener('click', function () {
+
+  function closeCelebrate() {
     $('celebrate').classList.remove('open');
     updateLock();
-  });
+  }
+
+  function checkCelebrate() {
+    var lvl = currentLevel();
+
+    // Cartela cheia (só celebra uma vez)
+    if (lvl === 2 && state.celebrated < 2) {
+      state.celebrated = 2;
+      save();
+      openCelebrate('CARTELA CHEIA!', 'Você completou todas as missões. Network em dia!');
+      return;
+    }
+    // Primeira linha completa (só celebra uma vez) — o jogo continua depois
+    if (lvl >= 1 && state.celebrated === 0) {
+      state.celebrated = 1;
+      save();
+      openCelebrate('BINGO!', 'Você completou sua primeira linha! Continue para completar a cartela inteira.');
+    }
+  }
+
+  // Fechar a celebração: botão, clique fora ou ESC
+  (function setupCelebrate() {
+    var cel = $('celebrate');
+    // Se o HTML não tiver nenhum botão dentro do modal, cria um "Continuar"
+    if (!cel.querySelector('button')) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'btn primary';
+      b.id = 'celClose';
+      b.textContent = 'Continuar';
+      (cel.firstElementChild || cel).appendChild(b);
+    }
+    cel.addEventListener('click', function (e) {
+      var onButton = e.target.closest ? e.target.closest('button') : null;
+      if (e.target === cel || onButton) closeCelebrate();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && cel.classList.contains('open')) closeCelebrate();
+    });
+  })();
 
   /* ---------- Folha da missão ---------- */
   var currentId = null;
@@ -280,6 +321,7 @@
         if (idx >= 0 && idx < arr.length && window.confirm('Remover ' + (arr[idx].name || 'esta pessoa') + ' desta missão?')) {
           arr.splice(idx, 1);
           save();
+          syncCelebrated();
           renderSheet();
           renderAll();
           checkCelebrate();
@@ -350,7 +392,7 @@
     if (!window.isSecureContext || !navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       setScanStatus('A câmera só funciona em site com HTTPS. Feche e cole o link do perfil.');
       return;
-    } 
+    }
     if (typeof window.jsQR !== 'function') {
       setScanStatus('Leitor de QR não carregou (sem internet?). Feche e cole o link do perfil.');
       return;
@@ -437,8 +479,7 @@
     $('confirm').classList.add('open');
     updateLock();
     setTimeout(function () {
-      var el = (!c.name || !m.semester) ? $('cName') : $('cSem');
-      if (!c.name) el.focus(); else if (m.semester) $('cSem').focus();
+      if (!c.name) $('cName').focus(); else if (m.semester) $('cSem').focus();
     }, 50);
   }
   function closeConfirm() {
@@ -539,12 +580,15 @@
       state = { mySemester: state.mySemester, celebrated: 0, missions: {} };
       save();
       closeSheet();
+      closeCelebrate();
       renderAll();
       toast('Bingo reiniciado');
     }
   });
 
+  /* ---------- Início ---------- */
   renderAll();
-  state.celebrated = Math.min(state.celebrated, completedLines().length);
+  // Mantém o nível de celebração coerente com o tabuleiro ao carregar
+  syncCelebrated();
   save();
 })();
